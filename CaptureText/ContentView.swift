@@ -93,7 +93,7 @@ struct ContentView: View {
                     
                 }
                 HStack {
-                    TextField("视频url", text: $downLoadUrl)
+                    TextField("视频URL", text: $downLoadUrl)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .frame(width: 200)
                     Button("解析URL视频") {
@@ -200,15 +200,15 @@ struct ContentView: View {
                 HStack {
                     SearchBar(text: $searchText)
                     
-                    Button("生成") {
+                    Button("拼接") {
                         isCanvasViewPresented = true
                     }
                     .disabled(selectedIndices.isEmpty)
                     
-                    Button("立即AI生成 ") {
-                        isCanvasViewPresented = true
-                    }
-                    .disabled(framesWithText.isEmpty && !isAnalyzing)
+//                    Button("立即AI生成 ") {
+//                        isCanvasViewPresented = true
+//                    }
+//                    .disabled(framesWithText.isEmpty && !isAnalyzing)
                     
 //                    Button("立即生成GIF") {
 //                        saveImagesToGif(getSelectedImages(), loopCount: 0, frameDuration: 0.5)
@@ -335,6 +335,9 @@ struct ContentView: View {
         self.framesWithText = []
         self.audioTranscriptions = []
         self.selectedIndices = []
+        DispatchQueue.main.async {
+            isSelected = false
+        }
         // 处理视频
         analyzeVideo()
         if let url = videoURL {
@@ -345,9 +348,7 @@ struct ContentView: View {
                }
            }
        }
-        DispatchQueue.main.async {
-            isSelected = false
-        }
+
     }
 
     
@@ -364,58 +365,90 @@ struct ContentView: View {
         var framesWithTextIng: [FrameWithText] = []
         var direct: [String: Bool] = [String: Bool]()
         
-        let fps: Float64 = 1 // 每秒分析一帧,可以根据需要调整
-        DispatchQueue.global(qos: .userInitiated).async {
-                 for time in stride(from: 0.0, to: duration, by: 1.0 / fps) {
-                     let cmTime = CMTime(seconds: time, preferredTimescale: 600)
-                     
-                     do {
-                         let cgImage = try generator.copyCGImage(at: cmTime, actualTime: nil)
-                         let nsImage = NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
-                         
-                         RecognizeText.recognizeTextInImage(image: CIImage(cgImage: cgImage)) { recognizedTexts in
-                                      if !recognizedTexts.isEmpty {
-                                          DispatchQueue.main.async {
-                                              let boundingBox: [CGRect] = []
-                                              recognizedTexts.forEach { recognizedText in
-                                                  if  direct[recognizedText.text] == false
-                                                        ||  direct[recognizedText.text] == nil {
-                                                      direct[recognizedText.text] = true
-                                                      framesWithTextIng.append(FrameWithText(
-                                                        image: nsImage,
-                                                        timestamp: cmTime,
-                                                        text: recognizedText.text,
-                                                        isWithText: true,
-                                                        textBounds: [recognizedText.boundingBox]
-                                                      ))
-                                                  }
-                                              }
-                                              self.frames.append(FrameWithText(
-                                                image: nsImage,
-                                                timestamp: cmTime,
-                                                text: "",
-                                                isWithText: false,
-                                                textBounds: boundingBox
-                                            ))
-                                          }
-                                      }
-                         }
-                         DispatchQueue.main.async {
-                             self.progress = Float(time / duration)
-                             self.framesWithText = framesWithTextIng
-                         }
-                     } catch {
-                         print("Error generating frame: \(error)")
-                     }
-                 }
-                 
-                 DispatchQueue.main.async {
-                     self.isAnalyzing = false
-                     self.progress = 1
-                     
-                 }
-             }
+        let fps: Float = 2500000
+        // 遍历时间戳 会丢失一些
+//        DispatchQueue.global(qos: .userInitiated).async {
+//                 for time in stride(from: 0.0, to: duration, by: 1.0 / fps) {
+//                     let cmTime = CMTime(seconds: time, preferredTimescale: 600)
+//                     
+//                     do {
+//                         let cgImage = try generator.copyCGImage(at: cmTime, actualTime: nil)
+//                         let nsImage = NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
+//                         
+//                         RecognizeText.recognizeTextInImage(image: CIImage(cgImage: cgImage)) { recognizedTexts in
+//                                      if !recognizedTexts.isEmpty {
+//                                          DispatchQueue.main.async {
+//                                              let boundingBox: [CGRect] = []
+//                                              recognizedTexts.forEach { recognizedText in
+//                                                  if  direct[recognizedText.text] == false
+//                                                        ||  direct[recognizedText.text] == nil {
+//                                                      direct[recognizedText.text] = true
+//                                                      framesWithTextIng.append(FrameWithText(
+//                                                        image: nsImage,
+//                                                        timestamp: cmTime,
+//                                                        text: recognizedText.text,
+//                                                        isWithText: true,
+//                                                        textBounds: [recognizedText.boundingBox]
+//                                                      ))
+//                                                  }
+//                                              }
+////                                              self.frames.append(FrameWithText(
+////                                                image: nsImage,
+////                                                timestamp: cmTime,
+////                                                text: "",
+////                                                isWithText: false,
+////                                                textBounds: boundingBox
+////                                            ))
+//                                          }
+//                                      }
+//                         }
+//                         DispatchQueue.main.async {
+//                             self.progress = Float(time / duration)
+//                             self.framesWithText = framesWithTextIng
+//                         }
+//                     } catch {
+//                         print("Error generating frame: \(error)")
+//                     }
+//                 }
+//                 
+//                 DispatchQueue.main.async {
+//                     self.isAnalyzing = false
+//                     self.progress = 1
+//                     
+//                 }
+//             }
+        
+        
+        // 
+        RecognizeText.extractAllFramesByTime(from: videoURL, interval: 0.1) { cmTime, cgImage in
+            let nsImage = NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
+            RecognizeText.recognizeTextInImage(image: CIImage(cgImage: cgImage)) { recognizedTexts in
+                if !recognizedTexts.isEmpty {
+                    DispatchQueue.main.async {
+                        let boundingBox: [CGRect] = []
+                        recognizedTexts.forEach { recognizedText in
+                            if  direct[recognizedText.text] == false
+                                    ||  direct[recognizedText.text] == nil {
+                                direct[recognizedText.text] = true
+                                self.framesWithText.append(FrameWithText(
+                                    image: nsImage,
+                                    timestamp: cmTime,
+                                    text: recognizedText.text,
+                                    isWithText: true,
+                                    textBounds: [recognizedText.boundingBox]
+                                ))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+         DispatchQueue.main.async {
+             self.isAnalyzing = false
+             self.progress = 1
          }
+        
+    }
     
 
   
