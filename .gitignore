@@ -1,0 +1,21 @@
+
+# misc
+.DS_Store
+
+## CocoaPods
+/Pods
+/Carthage
+Cartfile.resolved
+
+.build
+build/
+
+## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
+*.xcscmblueprint
+*.xccheckout
+
+## App packaging
+xcuserdata/
+*.ipa
+*.dSYM.zip
+*.dSYM
