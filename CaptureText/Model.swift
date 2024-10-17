@@ -30,3 +30,8 @@ struct AudioTranscription: Identifiable {
     let endTime: Double
 }
 
+struct ContentItem: Codable {
+    let index: Int
+    let text: String
+}
+

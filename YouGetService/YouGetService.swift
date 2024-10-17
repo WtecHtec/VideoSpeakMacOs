@@ -32,11 +32,10 @@ class YouGetService: NSObject, YouGetServiceProtocol {
             print("Invalid URL")
             return
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST" // 设置请求方法为 POST
         request.setValue("application/json", forHTTPHeaderField: "Content-Type") // 设置请求头
-
         // 将参数转为 JSON 数据
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
@@ -44,13 +43,13 @@ class YouGetService: NSObject, YouGetServiceProtocol {
             print("Error serializing JSON: \(error)")
             return
         }
-
+        
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 completion(false,error)
                 return
             }
-
+            
             if let data = data {
                 completion(true,data)
             } else {
@@ -58,24 +57,24 @@ class YouGetService: NSObject, YouGetServiceProtocol {
                 completion(false, unknownError)
             }
         }
-
+        
         task.resume()
     }
     
     func download(url: String, outputPath: String?, withReply reply: @escaping (Bool, String, String) -> Void) {
         let youGetPath = "/bin/bash" // 确保这是正确的路径
         let environment = [
-          "TERM": "xterm",
-          "HOME": "/Users/example-user/",
-          "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+            "TERM": "xterm",
+            "HOME": "/Users/example-user/",
+            "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
         ]
-      
+        
         var arguments = ["-c", "you-get \(url) -o \(outputPath!)"]
         print("arguments---", arguments)
-//        if let path = outputPath {
-//            arguments.insert("-o", at: 0)
-//            arguments.insert(path, at: 1)
-//        }
+        //        if let path = outputPath {
+        //            arguments.insert("-o", at: 0)
+        //            arguments.insert(path, at: 1)
+        //        }
         
         let task = Process()
         let outputPipe = Pipe()
@@ -101,4 +100,9 @@ class YouGetService: NSObject, YouGetServiceProtocol {
             reply(false, "", error.localizedDescription)
         }
     }
+    
+    
+    
+    
+    
 }

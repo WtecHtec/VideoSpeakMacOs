@@ -49,6 +49,7 @@ struct ContentView: View {
     
     @State private var downLoadUrl = ""
     
+    @State private var  aiContents: [ContentItem] = []
     // 计算属性
     var filteredFrames: [FrameWithText] {
         if searchText.isEmpty {
@@ -205,10 +206,19 @@ struct ContentView: View {
                     }
                     .disabled(selectedIndices.isEmpty)
                     
-//                    Button("立即AI生成 ") {
-//                        isCanvasViewPresented = true
-//                    }
-//                    .disabled(framesWithText.isEmpty && !isAnalyzing)
+                     Button("立即AI生成 ") {
+                         if let jsonData = try? JSONEncoder().encode(aiContents),
+                            let jsonString = String(data: jsonData, encoding: .utf8) {
+                             print("JSON 字符串: \(aiContents.count)")
+                             YouGetDownloader.postAi(content: jsonString) {  status, data in
+                                 if status {
+                                     print("")
+                                 }
+                             }
+
+                         }
+                     }
+                     .disabled(aiContents.isEmpty && !isAnalyzing)
                     
 //                    Button("立即生成GIF") {
 //                        saveImagesToGif(getSelectedImages(), loopCount: 0, frameDuration: 0.5)
@@ -338,17 +348,22 @@ struct ContentView: View {
         DispatchQueue.main.async {
             isSelected = false
         }
+        
+       
         // 处理视频
-        analyzeVideo()
-        if let url = videoURL {
-            // 字幕
-            TranscribeAudio.transcribeAudio(from: url) { transcriptions in
-               DispatchQueue.main.async {
-                   self.audioTranscriptions = TranscribeAudio.mergeTranscriptions(transcriptions)
-               }
-           }
-       }
-
+        DispatchQueue.global(qos: .userInitiated).async {
+            analyzeVideo()
+            if let url = videoURL {
+                // 字幕
+                TranscribeAudio.transcribeAudio(from: url) { transcriptions in
+                    DispatchQueue.main.async {
+                        self.audioTranscriptions = TranscribeAudio.mergeTranscriptions(transcriptions)
+                    }
+                }
+            }
+        }
+          
+    
     }
 
     
@@ -419,8 +434,9 @@ struct ContentView: View {
 //             }
         
         
-        // 
-        RecognizeText.extractAllFramesByTime(from: videoURL, interval: 0.1) { cmTime, cgImage in
+        //
+        var index = 0
+        RecognizeText.extractAllFramesByTime(from: videoURL, interval: 1) { cmTime, cgImage in
             let nsImage = NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
             RecognizeText.recognizeTextInImage(image: CIImage(cgImage: cgImage)) { recognizedTexts in
                 if !recognizedTexts.isEmpty {
@@ -437,6 +453,8 @@ struct ContentView: View {
                                     isWithText: true,
                                     textBounds: [recognizedText.boundingBox]
                                 ))
+                                self.aiContents.append(ContentItem(index: index,  text: recognizedText.text))
+                                index = index + 1
                             }
                         }
                     }

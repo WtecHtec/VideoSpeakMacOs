@@ -42,6 +42,22 @@ class YouGetDownloader {
         }
     }
     
+    
+    
+    static func postAi(content: String, completion: @escaping (Bool, String)  -> Void) {
+        makePostRequest(urlString: "http://127.0.0.1:3000/spark/agent", parameters: ["prompt": content]) { result in
+            switch result {
+            case .success(let data):
+                print(data)
+                completion(true, "")
+            case .failure(let error):
+                // 请求失败，处理错误
+                print("Error: \(error)")
+                completion(false, "")
+            }
+            }
+        }
+    
     static func makePostRequest(urlString: String, parameters: [String: Any], completion: @escaping (Result<Data, Error>)  -> Void) {
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
@@ -83,6 +99,7 @@ protocol YouGetServiceProtocol {
     func download(url: String, outputPath: String?, withReply reply: @escaping (Bool, String, String) -> Void)
     
     func makePostRequest(urlString: String, parameters: [String: Any], completion: @escaping (Bool, Any) -> Void)
+
 }
 
 class YouGetExecutor {
