@@ -9,6 +9,7 @@
 import SwiftUI
 import SpriteKit
 
+
  struct CanvasView: View {
 //    let images: [NSImage]
     let frameWithTexts: [FrameWithText]
@@ -16,6 +17,8 @@ import SpriteKit
     @Environment(\.presentationMode) var presentationMode
      
      @State private var magnification: CGFloat = 1.0
+     
+    
      
     var body: some View {
         VStack {

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		197DCCB02CE0CD9C00FA3B7C /* ModelScope in Frameworks */ = {isa = PBXBuildFile; productRef = 197DCCAF2CE0CD9C00FA3B7C /* ModelScope */; };
+		197DCCB32CE0CE0D00FA3B7C /* ModelScope in Frameworks */ = {isa = PBXBuildFile; productRef = 197DCCB22CE0CE0D00FA3B7C /* ModelScope */; };
+		197DCCB92CE0CF2E00FA3B7C /* ModelScope in Frameworks */ = {isa = PBXBuildFile; productRef = 197DCCB82CE0CF2E00FA3B7C /* ModelScope */; };
+		197DCCBC2CE0D8A700FA3B7C /* ModelScope in Frameworks */ = {isa = PBXBuildFile; productRef = 197DCCBB2CE0D8A700FA3B7C /* ModelScope */; };
 		1993458E2CBF980E00510D22 /* YouGetService.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 199345822CBF980E00510D22 /* YouGetService.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -70,6 +74,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				197DCCB02CE0CD9C00FA3B7C /* ModelScope in Frameworks */,
+				197DCCBC2CE0D8A700FA3B7C /* ModelScope in Frameworks */,
+				197DCCB32CE0CE0D00FA3B7C /* ModelScope in Frameworks */,
+				197DCCB92CE0CF2E00FA3B7C /* ModelScope in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,6 +131,10 @@
 			);
 			name = CaptureText;
 			packageProductDependencies = (
+				197DCCAF2CE0CD9C00FA3B7C /* ModelScope */,
+				197DCCB22CE0CE0D00FA3B7C /* ModelScope */,
+				197DCCB82CE0CF2E00FA3B7C /* ModelScope */,
+				197DCCBB2CE0D8A700FA3B7C /* ModelScope */,
 			);
 			productName = CaptureText;
 			productReference = 1993454E2CBB79BE00510D22 /* CaptureText.app */;
@@ -178,6 +190,7 @@
 			mainGroup = 199345452CBB79BE00510D22;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				197DCCBA2CE0D8A700FA3B7C /* XCRemoteSwiftPackageReference "ModelScope" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1993454F2CBB79BE00510D22 /* Products */;
@@ -356,7 +369,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_ENTITLEMENTS = CaptureText/CaptureText.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -369,6 +382,7 @@
 				INFOPLIST_FILE = CaptureText/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VideoSpeak;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -386,7 +400,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_ENTITLEMENTS = CaptureText/CaptureText.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -399,6 +413,7 @@
 				INFOPLIST_FILE = CaptureText/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = VideoSpeak;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -486,6 +501,37 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		197DCCBA2CE0D8A700FA3B7C /* XCRemoteSwiftPackageReference "ModelScope" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WtecHtec/ModelScope.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		197DCCAF2CE0CD9C00FA3B7C /* ModelScope */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ModelScope;
+		};
+		197DCCB22CE0CE0D00FA3B7C /* ModelScope */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ModelScope;
+		};
+		197DCCB82CE0CF2E00FA3B7C /* ModelScope */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ModelScope;
+		};
+		197DCCBB2CE0D8A700FA3B7C /* ModelScope */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 197DCCBA2CE0D8A700FA3B7C /* XCRemoteSwiftPackageReference "ModelScope" */;
+			productName = ModelScope;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 199345462CBB79BE00510D22 /* Project object */;
 }

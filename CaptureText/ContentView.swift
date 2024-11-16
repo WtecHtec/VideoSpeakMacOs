@@ -14,8 +14,7 @@ import Speech
 
 import ImageIO
 import UniformTypeIdentifiers
-import Security
-
+import Security 
 
 struct ContentView: View {
     @State private var videoURL: URL?
@@ -34,6 +33,8 @@ struct ContentView: View {
     @State private var isSelected = false
     
     @State private var downLoadError = false
+    
+    @ObservedObject var audioFileModel: AudioFileModel = AudioFileModel()
     
     // 定义网格布局
     let columns: [GridItem] = Array(repeating: .init(.flexible()), count: 4)
@@ -207,18 +208,31 @@ struct ContentView: View {
                     .disabled(selectedIndices.isEmpty)
                     
                      Button("立即AI生成 ") {
-                         if let jsonData = try? JSONEncoder().encode(aiContents),
-                            let jsonString = String(data: jsonData, encoding: .utf8) {
-                             print("JSON 字符串: \(aiContents.count)")
-                             YouGetDownloader.postAi(content: jsonString) {  status, data in
-                                 if status {
-                                     print("")
-                                 }
+                         
+//                         if let jsonData = try? JSONEncoder().encode(aiContents),
+//                            let jsonString = String(data: jsonData, encoding: .utf8) {
+//                             print("JSON 字符串: \(aiContents.count)")
+//                             YouGetDownloader.postAi(content: jsonString) {  status, data in
+//                                 if status {
+//                                     print("")
+//                                 }
+//                             }
+//                         }
+                         print("self.audioTranscriptions.isEmpty---", self.audioTranscriptions.isEmpty)
+                         if !self.audioTranscriptions.isEmpty {
+                             var content = ""
+                             self.audioTranscriptions.forEach { audioTranscription in
+                                 content = content + "\n" + audioTranscription.text
                              }
+                              YouGetDownloader.postAi(content: content) {  status, data in
+                                  if status {
+                                      print("")
+                                  }
+                              }
 
                          }
                      }
-                     .disabled(aiContents.isEmpty && !isAnalyzing)
+                     .disabled(self.audioTranscriptions.isEmpty)
                     
 //                    Button("立即生成GIF") {
 //                        saveImagesToGif(getSelectedImages(), loopCount: 0, frameDuration: 0.5)
@@ -257,13 +271,39 @@ struct ContentView: View {
 //                   }
 //                .tag(1)
                 
-                
-                List(audioTranscriptions) { transcription in
-                     AudioTranscriptionView(transcription: transcription)
-                 }
-                .scrollContentBackground(.hidden) // 隐藏默认背景
-                .listStyle(PlainListStyle()) // 使用无样式的列表
-                .edgesIgnoringSafeArea(.all)
+                VStack {
+                    
+                    List(audioTranscriptions) { transcription in
+                        AudioTranscriptionView(transcription: transcription)
+                    }
+                    .scrollContentBackground(.hidden) // 隐藏默认背景
+                    .listStyle(PlainListStyle()) // 使用无样式的列表
+                    .edgesIgnoringSafeArea(.all)
+                    
+                    HStack {
+                        if audioFileModel.exportInProgress {
+                           ProgressView("导出中...")
+                       }
+
+                        if audioFileModel.exportCompleted {
+                           Text("导出成功 🎉")
+                               .foregroundColor(.green)
+                       }
+
+                        if let error = audioFileModel.exportError {
+                           Text("导出失败: \(error)")
+                               .foregroundColor(.red)
+                       }
+                        Spacer()
+                        Button("导出音频文件") {
+                            if let videoURL = self.videoURL {
+                                audioFileModel.exportAudioFile(inVideoUrl: videoURL)
+                            }
+                        }
+                        .disabled(audioFileModel.exportInProgress || self.videoURL == nil)
+                    }
+                    
+                }
                  .tabItem {
                      Image(systemName: "waveform")
                      Text("音频文本")
@@ -352,7 +392,7 @@ struct ContentView: View {
        
         // 处理视频
         DispatchQueue.global(qos: .userInitiated).async {
-            analyzeVideo()
+            
             if let url = videoURL {
                 // 字幕
                 TranscribeAudio.transcribeAudio(from: url) { transcriptions in
@@ -361,6 +401,9 @@ struct ContentView: View {
                     }
                 }
             }
+        }
+        DispatchQueue.global(qos: .background).async {
+            analyzeVideo()
         }
           
     

@@ -45,7 +45,7 @@ class YouGetDownloader {
     
     
     static func postAi(content: String, completion: @escaping (Bool, String)  -> Void) {
-        makePostRequest(urlString: "http://127.0.0.1:3000/spark/agent", parameters: ["prompt": content]) { result in
+        makePostRequest(urlString: "http://127.0.0.1:3000/spark/blog", parameters: ["prompt": content]) { result in
             switch result {
             case .success(let data):
                 print(data)

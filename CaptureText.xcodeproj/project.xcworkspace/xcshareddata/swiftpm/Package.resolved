@@ -1,0 +1,24 @@
+{
+  "originHash" : "8c9314bb7249b313559fbe226db3e067e050296faa103c64bf95a3c423657dc9",
+  "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "revision" : "e16d3481f5ed35f0472cb93350085853d754913f",
+        "version" : "5.10.1"
+      }
+    },
+    {
+      "identity" : "modelscope",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/WtecHtec/ModelScope.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "fd75303640c27b1c8e2d6b0796a98e511ff48082"
+      }
+    }
+  ],
+  "version" : 3
+}
